@@ -314,12 +314,15 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       background: radial-gradient(circle at 50% 50%, #170213 0%, #050005 100%);
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-      padding: 30px;
+      padding: 24px 16px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      box-sizing: border-box;
     }
     .success-overlay.visible {
       opacity: 1;
@@ -329,14 +332,14 @@
     /* Elegant framed wrapper for the GIF */
     .success-gif-wrapper {
       position: relative;
-      border-radius: 42px;
+      border-radius: 28px;
       overflow: hidden;
       border: 1.5px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 25px 95px rgba(255, 20, 147, 0.45), 0 0 140px rgba(0, 0, 0, 0.85);
+      box-shadow: 0 15px 60px rgba(255, 20, 147, 0.45), 0 0 90px rgba(0, 0, 0, 0.85);
       transform: scale(0.4) rotate(-6deg);
       opacity: 0;
       transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s, opacity 0.8s ease 0.1s;
-      max-width: min(600px, 88vw);
+      max-width: min(260px, 60vw);
     }
     .success-overlay.visible .success-gif-wrapper {
       transform: scale(1) rotate(0deg);
@@ -344,21 +347,23 @@
     }
     .success-gif-wrapper img {
       width: 100%;
+      max-height: 28vh;
+      object-fit: contain;
       display: block;
-      border-radius: 42px;
+      border-radius: 28px;
     }
 
     /* Elegant playfair italic success msg */
     .success-message {
-      margin-top: 54px;
+      margin-top: 18px;
       font-family: 'Playfair Display', serif;
       font-style: italic;
       font-weight: 600;
-      font-size: clamp(2.7rem, 6.5vw, 4.2rem);
+      font-size: clamp(1.75rem, 5.5vw, 2.6rem);
       color: #fff;
-      text-shadow: 0 6px 28px rgba(255, 105, 180, 0.6);
+      text-shadow: 0 4px 20px rgba(255, 105, 180, 0.6);
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(15px);
       transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.5s;
       text-align: center;
     }
@@ -368,17 +373,17 @@
     }
 
     .success-sub {
-      margin-top: 21px;
-      font-size: clamp(1.35rem, 3.5vw, 1.65rem);
+      margin-top: 10px;
+      font-size: clamp(1rem, 3.2vw, 1.25rem);
       font-family: 'Montserrat', sans-serif;
       font-weight: 400;
       color: rgba(255, 218, 224, 0.9);
       opacity: 0;
-      transform: translateY(15px);
+      transform: translateY(12px);
       transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.7s, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.7s;
       text-align: center;
-      max-width: 750px;
-      line-height: 1.55;
+      max-width: 600px;
+      line-height: 1.45;
     }
     .success-overlay.visible .success-sub {
       opacity: 1;
@@ -387,9 +392,9 @@
 
     /* Row of pulsing custom SVG hearts */
     .success-hearts {
-      margin-top: 36px;
+      margin-top: 16px;
       display: flex;
-      gap: 18px;
+      gap: 14px;
       justify-content: center;
       opacity: 0;
       transition: opacity 0.9s ease 0.9s;
@@ -398,8 +403,8 @@
       opacity: 1;
     }
     .success-heart-icon {
-      width: 33px;
-      height: 33px;
+      width: 26px;
+      height: 26px;
       color: #ff4e8a;
       animation: successHeartBeat 1.4s ease-in-out infinite;
     }
@@ -551,6 +556,8 @@
       align-items: center;
       justify-content: center;
       width: 100%;
+      max-width: 440px;
+      margin: auto;
       animation: fadeInStage 0.5s ease;
     }
     #successStage2 {
@@ -559,6 +566,8 @@
       align-items: center;
       justify-content: center;
       width: 100%;
+      max-width: 440px;
+      margin: auto;
       animation: fadeInStage 0.4s ease;
     }
     #successStageActivity {
@@ -567,6 +576,8 @@
       align-items: center;
       justify-content: center;
       width: 100%;
+      max-width: 440px;
+      margin: auto;
       animation: fadeInStage 0.4s ease;
     }
     #successStage3 {
@@ -575,50 +586,53 @@
       align-items: center;
       justify-content: center;
       width: 100%;
+      max-width: 440px;
+      margin: auto;
       animation: fadeInStage 0.4s ease;
     }
     .activity-card {
       position: relative;
       background: #f7f9f6;
       color: #382a2e;
-      border-radius: 48px;
-      padding: 57px 42px 48px;
-      box-shadow: 0 35px 110px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.12);
-      width: 92vw;
-      max-width: 615px;
+      border-radius: 28px;
+      padding: 24px 18px 20px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.12);
+      width: 100%;
+      max-width: 420px;
       text-align: center;
+      box-sizing: border-box;
     }
     .activity-badge-row {
-      font-size: 3.3rem;
-      margin-bottom: 9px;
+      font-size: 2.2rem;
+      margin-bottom: 2px;
     }
     .activity-title {
       font-family: 'Playfair Display', serif;
-      font-size: 2.78rem;
+      font-size: 1.65rem;
       font-weight: 700;
       color: #5c1f30;
-      margin-bottom: 6px;
+      margin-bottom: 3px;
     }
     .activity-sub {
-      font-size: 1.28rem;
+      font-size: 0.95rem;
       color: #8c4c5c;
-      margin-bottom: 33px;
+      margin-bottom: 14px;
       font-weight: 500;
     }
     .activity-options-list {
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      margin-bottom: 30px;
+      gap: 10px;
+      margin-bottom: 16px;
     }
     .activity-option-item {
       display: flex;
       align-items: center;
-      gap: 21px;
-      padding: 21px 27px;
+      gap: 12px;
+      padding: 12px 14px;
       background: #ffffff;
-      border: 2.5px solid #e0d5d7;
-      border-radius: 24px;
+      border: 2px solid #e0d5d7;
+      border-radius: 16px;
       cursor: pointer;
       user-select: none;
       transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
@@ -627,44 +641,44 @@
     .activity-option-item:hover {
       border-color: #df538a;
       background: #fff8fa;
-      transform: translateY(-3px);
-      box-shadow: 0 9px 28px rgba(223, 83, 138, 0.18);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(223, 83, 138, 0.18);
     }
     .activity-option-item.selected {
       border-color: #df538a;
       background: #fff0f5;
-      transform: scale(1.02);
-      box-shadow: 0 12px 34px rgba(223, 83, 138, 0.28);
+      transform: scale(1.01);
+      box-shadow: 0 8px 22px rgba(223, 83, 138, 0.25);
     }
     .activity-opt-icon {
-      font-size: 3rem;
-      width: 57px;
+      font-size: 2rem;
+      width: 40px;
       text-align: center;
     }
     .activity-opt-info {
       flex: 1;
     }
     .activity-opt-title {
-      font-size: 1.58rem;
+      font-size: 1.18rem;
       font-weight: 700;
       color: #2b1f23;
       display: block;
     }
     .activity-opt-sub {
-      font-size: 1.14rem;
+      font-size: 0.88rem;
       color: #8c7b80;
       display: block;
-      margin-top: 3px;
+      margin-top: 2px;
     }
     .activity-check-box {
-      width: 33px;
-      height: 33px;
-      border: 3px solid #d4c4c7;
+      width: 26px;
+      height: 26px;
+      border: 2.5px solid #d4c4c7;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 14px;
       color: transparent;
       transition: all 0.2s;
     }
@@ -680,30 +694,30 @@
 
     /* Button on stage 1 to proceed to date chooser */
     .btn-next-step {
-      margin-top: 39px;
-      padding: 22px 57px;
+      margin-top: 18px;
+      padding: 14px 34px;
       font-family: 'Montserrat', sans-serif;
-      font-size: 1.58rem;
+      font-size: 1.18rem;
       font-weight: 600;
       border: none;
-      border-radius: 60px;
+      border-radius: 40px;
       cursor: pointer;
       background: linear-gradient(135deg, #ff4e8a, #ff1a6b);
       color: #fff;
-      box-shadow: 0 14px 44px rgba(255, 26, 107, 0.5);
+      box-shadow: 0 10px 30px rgba(255, 26, 107, 0.5);
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s;
       animation: pulseNext 2s infinite ease-in-out;
       display: inline-flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
     .btn-next-step:hover {
-      transform: scale(1.06) translateY(-2px);
-      box-shadow: 0 18px 54px rgba(255, 26, 107, 0.7);
+      transform: scale(1.05) translateY(-2px);
+      box-shadow: 0 14px 38px rgba(255, 26, 107, 0.7);
     }
     @keyframes pulseNext {
-      0%, 100% { transform: scale(1); box-shadow: 0 12px 34px rgba(255, 26, 107, 0.45); }
-      50% { transform: scale(1.04); box-shadow: 0 16px 45px rgba(255, 26, 107, 0.7); }
+      0%, 100% { transform: scale(1); box-shadow: 0 8px 24px rgba(255, 26, 107, 0.45); }
+      50% { transform: scale(1.03); box-shadow: 0 12px 32px rgba(255, 26, 107, 0.7); }
     }
 
     /* Date Chooser Card (Matching User's Reference Image) */
@@ -711,27 +725,28 @@
       position: relative;
       background: #f7f9f6;
       color: #382a2e;
-      border-radius: 48px;
-      padding: 57px 48px 48px;
-      box-shadow: 0 35px 110px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.12);
-      width: 92vw;
-      max-width: 615px;
+      border-radius: 28px;
+      padding: 24px 18px 20px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.12);
+      width: 100%;
+      max-width: 420px;
       text-align: center;
+      box-sizing: border-box;
     }
 
     .date-back-btn {
       position: absolute;
-      top: 27px;
-      left: 30px;
+      top: 14px;
+      left: 14px;
       border: none;
       background: transparent;
       color: #8c364d;
-      font-size: 1.28rem;
+      font-size: 0.98rem;
       font-weight: 600;
       cursor: pointer;
       font-family: 'Montserrat', sans-serif;
-      padding: 6px 12px;
-      border-radius: 12px;
+      padding: 4px 8px;
+      border-radius: 8px;
       transition: background 0.2s;
     }
     .date-back-btn:hover {
@@ -743,28 +758,28 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 18px;
-      margin-bottom: 9px;
+      gap: 12px;
+      margin-bottom: 4px;
     }
     .mini-calendar-icon {
-      width: 66px;
-      height: 72px;
+      width: 44px;
+      height: 48px;
       background: #ffffff;
-      border: 2px solid #d4c8c8;
-      border-radius: 14px;
+      border: 1.5px solid #d4c8c8;
+      border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
       display: flex;
       flex-direction: column;
     }
     .mini-cal-month {
       background: #c53838;
       color: #ffffff;
-      font-size: 0.98rem;
+      font-size: 0.7rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
-      padding: 3px 0;
+      letter-spacing: 0.5px;
+      padding: 2px 0;
       text-align: center;
     }
     .mini-cal-day {
@@ -772,14 +787,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.88rem;
+      font-size: 1.25rem;
       font-weight: 800;
       color: #2b2225;
       font-family: 'Playfair Display', serif;
     }
     .paw-prints {
-      font-size: 2.4rem;
-      letter-spacing: 3px;
+      font-size: 1.6rem;
+      letter-spacing: 2px;
       opacity: 0.85;
       transform: rotate(-10deg);
     }
@@ -787,55 +802,55 @@
     /* Card title */
     .date-title {
       font-family: 'Playfair Display', serif;
-      font-size: 2.78rem;
+      font-size: 1.65rem;
       font-weight: 700;
       color: #5c1f30;
-      margin: 15px 0 33px;
+      margin: 6px 0 14px;
       letter-spacing: -0.3px;
     }
 
     /* Form groups */
     .date-form-group {
       text-align: left;
-      margin-bottom: 27px;
+      margin-bottom: 14px;
       position: relative;
     }
     .date-form-label {
       display: block;
-      font-size: 1.35rem;
+      font-size: 1rem;
       font-weight: 600;
       color: #453439;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
       font-family: 'Montserrat', sans-serif;
     }
     .date-input-wrapper {
       display: flex;
       align-items: center;
       background: #ffffff;
-      border: 2px solid #dcd3d3;
-      border-radius: 18px;
-      padding: 18px 21px;
+      border: 1.5px solid #dcd3d3;
+      border-radius: 14px;
+      padding: 11px 14px;
       cursor: pointer;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .date-input-wrapper:hover, .date-input-wrapper.active {
       border-color: #df538a;
-      box-shadow: 0 0 0 4px rgba(223, 83, 138, 0.14);
+      box-shadow: 0 0 0 3px rgba(223, 83, 138, 0.14);
     }
     .date-input-wrapper input {
       border: none;
       outline: none;
       background: transparent;
       font-family: 'Montserrat', sans-serif;
-      font-size: 1.47rem;
+      font-size: 1.15rem;
       font-weight: 600;
       color: #332327;
       width: 100%;
       cursor: pointer;
     }
     .cal-toggle-icon {
-      font-size: 1.8rem;
-      margin-left: 12px;
+      font-size: 1.3rem;
+      margin-left: 8px;
       opacity: 0.85;
       user-select: none;
     }
@@ -843,25 +858,25 @@
     .time-select-wrapper {
       position: relative;
       background: #ffffff;
-      border: 2px solid #dcd3d3;
-      border-radius: 18px;
-      padding: 0 21px;
+      border: 1.5px solid #dcd3d3;
+      border-radius: 14px;
+      padding: 0 14px;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
     .time-select-wrapper:focus-within {
       border-color: #df538a;
-      box-shadow: 0 0 0 4px rgba(223, 83, 138, 0.14);
+      box-shadow: 0 0 0 3px rgba(223, 83, 138, 0.14);
     }
     .time-select-wrapper select {
       border: none;
       outline: none;
       background: transparent;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      font-size: 1.47rem;
+      font-size: 1.08rem;
       font-weight: 500;
       color: #202124;
       width: 100%;
-      padding: 20px 39px 20px 0;
+      padding: 12px 28px 12px 0;
       cursor: pointer;
       appearance: none;
       -webkit-appearance: none;
@@ -870,41 +885,41 @@
     .time-select-wrapper::after {
       content: '▾';
       position: absolute;
-      right: 21px;
+      right: 14px;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 20px;
+      font-size: 16px;
       color: #5f6368;
       pointer-events: none;
     }
     .time-select-wrapper select option {
       color: #202124;
       background: #ffffff;
-      padding: 12px;
-      font-size: 20px;
+      padding: 8px;
+      font-size: 16px;
     }
 
     /* Pink button: set the date! ♥ */
     .btn-set-date {
       width: 100%;
-      padding: 22px;
+      padding: 14px;
       border: none;
-      border-radius: 60px;
+      border-radius: 40px;
       background: #df538a;
       color: #ffffff;
       font-family: 'Montserrat', sans-serif;
-      font-size: 1.58rem;
+      font-size: 1.18rem;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 15px;
-      box-shadow: 0 12px 36px rgba(223, 83, 138, 0.42);
+      margin-top: 8px;
+      box-shadow: 0 8px 24px rgba(223, 83, 138, 0.42);
       transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.6px;
     }
     .btn-set-date:hover {
       background: #ce4077;
-      transform: translateY(-3px);
-      box-shadow: 0 16px 45px rgba(223, 83, 138, 0.65);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(223, 83, 138, 0.65);
     }
     .btn-set-date:active {
       transform: scale(0.98);
@@ -912,30 +927,31 @@
 
     /* Error / alert toast */
     .date-alert-msg {
-      font-size: 1.2rem;
+      font-size: 0.98rem;
       color: #c5294e;
       font-weight: 600;
-      min-height: 27px;
-      margin-top: 6px;
-      margin-bottom: 9px;
+      min-height: 20px;
+      margin-top: 4px;
+      margin-bottom: 4px;
       text-align: center;
     }
 
     /* Chrome Native Datepicker Style matching User's Reference Image */
     .calendar-popup {
       position: absolute;
-      top: calc(100% + 12px);
+      top: calc(100% + 6px);
       left: 50%;
       transform: translateX(-50%);
-      width: 438px;
+      width: min(320px, 90vw);
       background: #ffffff;
       border: 1.5px solid #dadce0;
       border-radius: 12px;
       box-shadow: 0 6px 30px rgba(0, 0, 0, 0.28);
-      padding: 21px 21px 15px;
+      padding: 12px 10px;
       z-index: 120;
       display: none;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      box-sizing: border-box;
     }
     .calendar-popup.open {
       display: block;
@@ -949,40 +965,40 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 18px;
-      padding: 0 6px;
+      margin-bottom: 10px;
+      padding: 0 4px;
     }
     .cal-month-title-wrap {
-      font-size: 22px;
+      font-size: 16px;
       font-weight: 700;
       color: #202124;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       user-select: none;
     }
     .cal-month-caret {
-      font-size: 16px;
+      font-size: 14px;
       color: #3c4043;
     }
     .cal-arrows-group {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 12px;
     }
     .cal-nav-arrow {
       background: transparent;
       border: none;
       color: #3c4043;
-      font-size: 28px;
+      font-size: 20px;
       font-weight: 700;
       cursor: pointer;
-      padding: 0 6px;
+      padding: 0 4px;
       line-height: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 6px;
+      border-radius: 4px;
       transition: background 0.15s, color 0.15s;
     }
     .cal-nav-arrow:hover {
@@ -993,27 +1009,27 @@
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       text-align: center;
-      font-size: 19px;
+      font-size: 14px;
       font-weight: 700;
       color: #202124;
-      margin-bottom: 12px;
+      margin-bottom: 6px;
       user-select: none;
     }
     .cal-grid-days {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      row-gap: 6px;
-      column-gap: 3px;
+      row-gap: 4px;
+      column-gap: 2px;
     }
     .cal-day-cell {
-      height: 48px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 21px;
+      font-size: 15px;
       font-weight: 500;
       color: #202124;
-      border-radius: 6px;
+      border-radius: 4px;
       cursor: pointer;
       user-select: none;
       transition: background 0.12s, border-color 0.12s;
@@ -1033,33 +1049,33 @@
     }
     .cal-day-cell.available:hover {
       background: #d2e3fc;
-      border: 1.5px solid #1a73e8;
+      border: 1px solid #1a73e8;
       color: #1a73e8;
     }
     .cal-day-cell.selected {
       background: #1a73e8 !important;
       color: #ffffff !important;
       font-weight: 700 !important;
-      border-radius: 6px !important;
+      border-radius: 4px !important;
       border: none !important;
     }
     .cal-footer-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 21px;
-      padding-top: 15px;
-      border-top: 1.5px solid #dadce0;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #dadce0;
     }
     .cal-footer-btn {
       background: transparent;
       border: none;
       color: #1a73e8;
-      font-size: 19px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      padding: 6px 9px;
-      border-radius: 6px;
+      padding: 4px 6px;
+      border-radius: 4px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       transition: background 0.15s;
     }
@@ -1071,95 +1087,96 @@
     .confirmed-card {
       background: #f7f9f6;
       color: #382a2e;
-      border-radius: 48px;
-      padding: 57px 45px;
-      box-shadow: 0 35px 110px rgba(0, 0, 0, 0.7);
-      width: 92vw;
-      max-width: 615px;
+      border-radius: 28px;
+      padding: 24px 18px 20px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7);
+      width: 100%;
+      max-width: 420px;
       text-align: center;
+      box-sizing: border-box;
     }
     .confirmed-badge {
-      font-size: 3.3rem;
-      margin-bottom: 9px;
+      font-size: 2.2rem;
+      margin-bottom: 2px;
     }
     .confirmed-title {
       font-family: 'Playfair Display', serif;
-      font-size: 3rem;
+      font-size: 1.65rem;
       font-weight: 700;
       color: #5c1f30;
-      margin-bottom: 6px;
+      margin-bottom: 2px;
     }
     .confirmed-sub {
-      font-size: 1.28rem;
+      font-size: 0.95rem;
       color: #8c4c5c;
-      margin-bottom: 33px;
+      margin-bottom: 14px;
       font-weight: 500;
     }
     .confirmed-details-box {
       background: #ffffff;
-      border: 2px solid #e8dede;
-      border-radius: 27px;
-      padding: 24px 27px;
-      margin-bottom: 27px;
+      border: 1.5px solid #e8dede;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
       text-align: left;
     }
     .confirm-detail-item {
       display: flex;
       align-items: center;
-      gap: 18px;
-      margin-bottom: 18px;
+      gap: 12px;
+      margin-bottom: 10px;
     }
     .confirm-detail-item:last-child {
       margin-bottom: 0;
     }
     .confirm-item-icon {
-      font-size: 2.1rem;
-      width: 48px;
+      font-size: 1.4rem;
+      width: 32px;
       text-align: center;
     }
     .confirm-item-text .confirm-item-label {
-      font-size: 1.08rem;
+      font-size: 0.78rem;
       font-weight: 600;
       color: #998388;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.6px;
       display: block;
     }
     .confirm-item-text .confirm-item-val {
-      font-size: 1.42rem;
+      font-size: 1.12rem;
       font-weight: 700;
       color: #3b282d;
     }
     .confirmed-fun-text {
-      font-size: 1.28rem;
+      font-size: 0.95rem;
       color: #5c3841;
-      line-height: 1.55;
-      margin-bottom: 30px;
+      line-height: 1.45;
+      margin-bottom: 16px;
     }
     .btn-whatsapp-share {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 10px;
       width: 100%;
-      padding: 22px;
+      padding: 14px;
       border: none;
-      border-radius: 60px;
+      border-radius: 40px;
       background: #25D366;
       color: #ffffff;
       font-family: 'Montserrat', sans-serif;
-      font-size: 1.5rem;
+      font-size: 1.15rem;
       font-weight: 700;
       text-decoration: none;
-      box-shadow: 0 12px 36px rgba(37, 211, 102, 0.4);
+      box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
       cursor: pointer;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
       transition: transform 0.2s, box-shadow 0.2s;
     }
     .btn-whatsapp-share:hover {
       background: #20ba5a;
-      transform: translateY(-3px);
-      box-shadow: 0 16px 45px rgba(37, 211, 102, 0.65);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(37, 211, 102, 0.65);
     }
     .btn-change-choice {
       border: none;
