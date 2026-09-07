@@ -235,26 +235,39 @@
       opacity: 0;
     }
 
-    /* Inside-letter YES & NO buttons */
+    /* Inside-letter YES & NO buttons - Perfectly Symmetrical & Matching Dimensions */
     .buttons {
       display: flex;
-      gap: 20px;
+      gap: 16px;
       justify-content: center;
       align-items: center;
       width: 100%;
-      margin-top: 4px;
+      margin-top: 6px;
+    }
+
+    .btn-yes, .btn-no {
+      height: 52px;
+      padding: 0 32px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      border-radius: 60px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      line-height: 1;
     }
 
     .btn-yes {
-      padding: 18px 42px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 1.42rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.4px;
-      border: none;
-      border-radius: 60px;
-      cursor: pointer;
+      border: 2px solid transparent;
       background: linear-gradient(135deg, #ff4e8a, #ff1a6b);
       color: #fff;
       box-shadow: 0 8px 26px rgba(255, 26, 107, 0.45);
@@ -266,27 +279,13 @@
     }
 
     .btn-no {
-      padding: 18px 42px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 1.42rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.4px;
-      border: 3px solid #e63946;
-      border-radius: 60px;
-      cursor: pointer;
+      border: 2px solid #e63946;
       background: #e63946;
       color: #ffffff;
       z-index: 100;
-      user-select: none;
-      -webkit-user-select: none;
       touch-action: manipulation;
-      white-space: nowrap;
       transition: background 0.3s, border-color 0.3s, transform 0.2s;
       box-shadow: 0 8px 26px rgba(230, 57, 70, 0.4);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
     }
     .btn-no:hover {
       background: #d62839;
@@ -1234,11 +1233,15 @@
         font-size: 1.22rem;
       }
       .buttons {
-        gap: 12px;
+        gap: 10px;
+        margin-top: 4px;
       }
       .btn-yes, .btn-no {
-        padding: 10px 22px;
-        font-size: 0.88rem;
+        height: 44px;
+        padding: 0 18px;
+        font-size: 0.92rem;
+        gap: 6px;
+        white-space: nowrap;
       }
     }
   </style>
