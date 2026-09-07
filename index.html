@@ -1890,16 +1890,10 @@
     if (!scrollBody) return;
     scrollBody.innerHTML = '';
 
-    const today = new Date();
-    const startYear = today.getFullYear();
-    const startMonth = today.getMonth();
+    const year = 2026;
 
-    // Render 18 consecutive months for smooth continuous scrolling
-    for (let offset = 0; offset <= 18; offset++) {
-      const targetDate = new Date(startYear, startMonth + offset, 1);
-      const year = targetDate.getFullYear();
-      const month = targetDate.getMonth();
-
+    // Render strictly for the year 2026 (January to December 2026)
+    for (let month = 0; month <= 11; month++) {
       const monthSection = document.createElement('div');
       monthSection.className = 'cal-month-section';
       monthSection.id = `calMonth-${year}-${month}`;
@@ -1968,11 +1962,10 @@
     if (!scrollBody) return;
 
     const today = new Date();
-    let targetYear = today.getFullYear();
+    let targetYear = 2026;
     let targetMonth = today.getMonth();
 
-    if (selectedDateObj) {
-      targetYear = selectedDateObj.getFullYear();
+    if (selectedDateObj && selectedDateObj.getFullYear() === 2026) {
       targetMonth = selectedDateObj.getMonth();
     }
 
