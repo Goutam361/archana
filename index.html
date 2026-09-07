@@ -974,9 +974,9 @@
     .cal-header-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       margin-bottom: 8px;
-      padding: 0 4px;
+      padding: 2px 4px;
     }
     .cal-month-title-wrap {
       font-size: 16px;
@@ -984,36 +984,19 @@
       color: #ffffff;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       user-select: none;
     }
     .cal-month-caret {
       font-size: 14px;
       color: #9aa0a6;
     }
-    .cal-arrows-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    @keyframes calGridFade {
+      from { opacity: 0.35; transform: translateY(2px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .cal-nav-arrow {
-      background: transparent;
-      border: none;
-      color: #e8eaed;
-      font-size: 20px;
-      font-weight: 700;
-      cursor: pointer;
-      padding: 0 4px;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      transition: background 0.15s, color 0.15s;
-    }
-    .cal-nav-arrow:hover {
-      background: #3c4043;
-      color: #ffffff;
+    .cal-grid-animate {
+      animation: calGridFade 0.16s ease-out;
     }
     .cal-weekday-row {
       display: grid;
@@ -1314,10 +1297,6 @@
               <div class="cal-month-title-wrap">
                 <span id="calMonthTitle">August 2026</span>
                 <span class="cal-month-caret">▾</span>
-              </div>
-              <div class="cal-arrows-group">
-                <button type="button" class="cal-nav-arrow" onclick="navMonth(-1)" title="Previous month">↑</button>
-                <button type="button" class="cal-nav-arrow" onclick="navMonth(1)" title="Next month">↓</button>
               </div>
             </div>
 
@@ -1911,6 +1890,9 @@
     const grid = document.getElementById('calDaysGrid');
     if (!grid) return;
     grid.innerHTML = '';
+    grid.classList.remove('cal-grid-animate');
+    void grid.offsetWidth; // Trigger reflow for smooth animation
+    grid.classList.add('cal-grid-animate');
 
     const firstDayIndex = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -2071,6 +2053,60 @@
       if (wrapper) wrapper.classList.toggle('active', isOpen);
       if (isOpen) renderCalendar();
     }
+  }
+
+  // Mouse Wheel / Trackpad Scroll to navigate months
+  let calWheelThrottle = false;
+  const calPopupEl = document.getElementById('calendarPopup');
+  if (calPopupEl) {
+    calPopupEl.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      if (calWheelThrottle) return;
+      if (Math.abs(e.deltaY) > 8 || Math.abs(e.deltaX) > 8) {
+        calWheelThrottle = true;
+        const dir = (e.deltaY > 0 || e.deltaX > 0) ? 1 : -1;
+        navMonth(dir);
+        setTimeout(function() { calWheelThrottle = false; }, 180);
+      }
+    }, { passive: false });
+
+    // Touch Swipe Navigation for Mobile Devices
+    let touchStartY = 0;
+    let touchStartX = 0;
+    let touchStartTime = 0;
+
+    calPopupEl.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1) {
+        touchStartY = e.touches[0].clientY;
+        touchStartX = e.touches[0].clientX;
+        touchStartTime = Date.now();
+      }
+    }, { passive: true });
+
+    calPopupEl.addEventListener('touchend', function(e) {
+      if (e.changedTouches.length === 1) {
+        const deltaY = e.changedTouches[0].clientY - touchStartY;
+        const deltaX = e.changedTouches[0].clientX - touchStartX;
+        const elapsedTime = Date.now() - touchStartTime;
+
+        // Detect vertical swipe
+        if (Math.abs(deltaY) > 25 && Math.abs(deltaY) > Math.abs(deltaX)) {
+          // Swipe up -> Next month (+1), Swipe down -> Previous month (-1)
+          if (deltaY < 0) {
+            navMonth(1);
+          } else {
+            navMonth(-1);
+          }
+        } else if (Math.abs(deltaX) > 25) {
+          // Swipe left -> Next month (+1), Swipe right -> Previous month (-1)
+          if (deltaX < 0) {
+            navMonth(1);
+          } else {
+            navMonth(-1);
+          }
+        }
+      }
+    }, { passive: true });
   }
 
   // Close calendar popup on click outside
