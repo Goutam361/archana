@@ -734,23 +734,32 @@
       box-sizing: border-box;
     }
 
-    .date-back-btn {
-      position: absolute;
-      top: 14px;
-      left: 14px;
+    .card-top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      margin-bottom: 6px;
+    }
+
+    .card-back-btn {
       border: none;
-      background: transparent;
+      background: rgba(140, 54, 77, 0.08);
       color: #8c364d;
-      font-size: 0.98rem;
+      font-size: 0.92rem;
       font-weight: 600;
       cursor: pointer;
       font-family: 'Montserrat', sans-serif;
-      padding: 4px 8px;
-      border-radius: 8px;
-      transition: background 0.2s;
+      padding: 5px 12px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.2s, transform 0.15s;
     }
-    .date-back-btn:hover {
-      background: rgba(140, 54, 77, 0.08);
+    .card-back-btn:hover {
+      background: rgba(140, 54, 77, 0.16);
+      transform: translateX(-2px);
     }
 
     /* Top icon: mini calendar + paws */
@@ -1272,10 +1281,9 @@
     <!-- Stage 2: Date & Time Chooser Card (Matching Reference Image) -->
     <div id="successStage2">
       <div class="date-card" id="dateCard">
-        <button type="button" class="date-back-btn" onclick="backToSuccessStage1()">← Back</button>
-        
-
-
+        <div class="card-top-nav">
+          <button type="button" class="card-back-btn" onclick="backToSuccessStage1()">← Back</button>
+        </div>
 
         <h2 class="date-title">So... when are you free?</h2>
 
@@ -1342,7 +1350,9 @@
     <!-- Stage Activity: Choose Date Type -->
     <div id="successStageActivity">
       <div class="activity-card">
-        <button type="button" class="date-back-btn" onclick="backToDateChooser()">← Back</button>
+        <div class="card-top-nav">
+          <button type="button" class="card-back-btn" onclick="backToDateChooser()">← Back</button>
+        </div>
         <h2 class="activity-title">What are we doing?</h2>
         <p class="activity-sub">Choose our date plan 💕</p>
 
