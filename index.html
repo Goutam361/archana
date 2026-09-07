@@ -1449,7 +1449,10 @@
   }
 
   function activateAndDodge(e) {
-    if (e && e.cancelable) e.preventDefault();
+    if (e) {
+      if (e.cancelable) e.preventDefault();
+      if (e.stopPropagation) e.stopPropagation();
+    }
 
     // Only dodge if envelope is open
     const env = document.getElementById('envelope');
@@ -1461,10 +1464,24 @@
       try { navigator.vibrate(50); } catch (err) {}
     }
 
-    dodge();
+    let originX = undefined, originY = undefined;
+    if (e) {
+      if (e.touches && e.touches.length > 0) {
+        originX = e.touches[0].clientX;
+        originY = e.touches[0].clientY;
+      } else if (e.changedTouches && e.changedTouches.length > 0) {
+        originX = e.changedTouches[0].clientX;
+        originY = e.changedTouches[0].clientY;
+      } else if (typeof e.clientX === 'number' && (e.clientX !== 0 || e.clientY !== 0)) {
+        originX = e.clientX;
+        originY = e.clientY;
+      }
+    }
+
+    dodge(originX, originY);
   }
 
-  function dodge() {
+  function dodge(fromX, fromY) {
     const w = btnNo.offsetWidth  || 110;
     const h = btnNo.offsetHeight || 44;
     const winW = window.innerWidth;
@@ -1473,70 +1490,96 @@
     const maxX = Math.max(MARGIN, winW - w - MARGIN);
     const minY = MARGIN;
     const maxY = Math.max(MARGIN, winH - h - MARGIN);
-    const minDodge = winW < 600 ? 90 : 160;
+
+    // Reference center of current button or interaction point
+    const curX = (typeof fromX === 'number') ? fromX : (noX + w / 2);
+    const curY = (typeof fromY === 'number') ? fromY : (noY + h / 2);
+
+    // Large minimum distance to ensure it jumps far away across the screen
+    const screenDiag = Math.hypot(winW, winH);
+    const minDodge = Math.max(winW < 600 ? 220 : 380, screenDiag * 0.45);
 
     const card = document.getElementById('letterCard') || document.getElementById('envelope');
     const cardRect = card ? card.getBoundingClientRect() : null;
 
-    let pos, attempts = 0;
-    do {
-      pos = {
-        x: minX + Math.random() * (maxX - minX),
-        y: minY + Math.random() * (maxY - minY)
-      };
-      attempts++;
+    let bestPos = null;
+    let maxDistFound = -1;
+
+    for (let attempts = 0; attempts < 80; attempts++) {
+      const candX = minX + Math.random() * (maxX - minX);
+      const candY = minY + Math.random() * (maxY - minY);
+      const candCenterX = candX + w / 2;
+      const candCenterY = candY + h / 2;
+      const dist = Math.hypot(candCenterX - curX, candCenterY - curY);
 
       const overlapsCard = cardRect && (
-        pos.x < cardRect.right + 15 &&
-        pos.x + w > cardRect.left - 15 &&
-        pos.y < cardRect.bottom + 15 &&
-        pos.y + h > cardRect.top - 15
+        candX < cardRect.right + 15 &&
+        candX + w > cardRect.left - 15 &&
+        candY < cardRect.bottom + 15 &&
+        candY + h > cardRect.top - 15
       );
 
-      if (!overlapsCard || attempts > 20) {
-        if (Math.hypot(pos.x - noX, pos.y - noY) >= minDodge) {
-          break;
-        }
+      if (dist > maxDistFound) {
+        maxDistFound = dist;
+        bestPos = { x: candX, y: candY };
       }
-    } while (attempts < 35);
 
-    noX = Math.min(Math.max(minX, pos.x), maxX);
-    noY = Math.min(Math.max(minY, pos.y), maxY);
+      if (!overlapsCard && dist >= minDodge) {
+        bestPos = { x: candX, y: candY };
+        break;
+      }
+    }
 
-    btnNo.style.transition = 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    if (!bestPos || maxDistFound < minDodge) {
+      // Fallback jump to opposite diagonal quadrant
+      const targetX = curX < winW / 2 ? maxX : minX;
+      const targetY = curY < winH / 2 ? maxY : minY;
+      bestPos = { x: targetX, y: targetY };
+    }
+
+    noX = Math.min(Math.max(minX, bestPos.x), maxX);
+    noY = Math.min(Math.max(minY, bestPos.y), maxY);
+
+    btnNo.style.transition = 'transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1)';
     btnNo.style.transform = `translate3d(${noX}px, ${noY}px, 0)`;
   }
 
   // Desktop Mouse Movement Proximity
   document.addEventListener('mousemove', function(e) {
+    const env = document.getElementById('envelope');
+    if (env && !env.classList.contains('open')) return;
     const rect = btnNo.getBoundingClientRect();
     const cx = rect.left + rect.width  / 2;
     const cy = rect.top  + rect.height / 2;
     if (Math.hypot(e.clientX - cx, e.clientY - cy) < DODGE_DIST) {
-      activateAndDodge();
+      activateAndDodge(e);
     }
   });
 
   // Mobile Touch Proximity
   document.addEventListener('touchmove', function(e) {
+    const env = document.getElementById('envelope');
+    if (env && !env.classList.contains('open')) return;
     if (!e.touches || e.touches.length === 0) return;
     const t = e.touches[0];
     const rect = btnNo.getBoundingClientRect();
     const cx = rect.left + rect.width  / 2;
     const cy = rect.top  + rect.height / 2;
     if (Math.hypot(t.clientX - cx, t.clientY - cy) < DODGE_DIST) {
-      activateAndDodge();
+      activateAndDodge(e);
     }
   }, { passive: true });
 
   document.addEventListener('touchstart', function(e) {
+    const env = document.getElementById('envelope');
+    if (env && !env.classList.contains('open')) return;
     if (!e.touches || e.touches.length === 0) return;
     const t = e.touches[0];
     const rect = btnNo.getBoundingClientRect();
     const cx = rect.left + rect.width  / 2;
     const cy = rect.top  + rect.height / 2;
     if (Math.hypot(t.clientX - cx, t.clientY - cy) < DODGE_DIST) {
-      activateAndDodge();
+      activateAndDodge(e);
     }
   }, { passive: true });
 
