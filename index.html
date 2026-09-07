@@ -945,17 +945,18 @@
       text-align: center;
     }
 
-    /* Chrome Native Datepicker Style matching User's Reference Image */
+    /* Chrome Native Datepicker Style with high contrast in Light & Dark Mode */
     .calendar-popup {
       position: absolute;
       top: calc(100% + 6px);
       left: 50%;
       transform: translateX(-50%);
       width: min(320px, 90vw);
-      background: #ffffff;
-      border: 1.5px solid #dadce0;
+      background: #202124;
+      color: #e8eaed;
+      border: 1.5px solid #3c4043;
       border-radius: 12px;
-      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.28);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
       padding: 12px 10px;
       z-index: 120;
       display: none;
@@ -974,13 +975,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       padding: 0 4px;
     }
     .cal-month-title-wrap {
       font-size: 16px;
       font-weight: 700;
-      color: #202124;
+      color: #ffffff;
       display: inline-flex;
       align-items: center;
       gap: 4px;
@@ -988,7 +989,7 @@
     }
     .cal-month-caret {
       font-size: 14px;
-      color: #3c4043;
+      color: #9aa0a6;
     }
     .cal-arrows-group {
       display: flex;
@@ -998,7 +999,7 @@
     .cal-nav-arrow {
       background: transparent;
       border: none;
-      color: #3c4043;
+      color: #e8eaed;
       font-size: 20px;
       font-weight: 700;
       cursor: pointer;
@@ -1011,18 +1012,22 @@
       transition: background 0.15s, color 0.15s;
     }
     .cal-nav-arrow:hover {
-      background: #e8eaed;
-      color: #202124;
+      background: #3c4043;
+      color: #ffffff;
     }
     .cal-weekday-row {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       text-align: center;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
-      color: #202124;
+      color: #9aa0a6;
       margin-bottom: 6px;
       user-select: none;
+    }
+    .cal-weekday-row span:first-child {
+      color: #ff6584;
+      font-weight: 800;
     }
     .cal-grid-days {
       display: grid;
@@ -1035,38 +1040,56 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 500;
-      color: #202124;
-      border-radius: 4px;
+      color: #e8eaed;
+      border-radius: 6px;
       cursor: pointer;
       user-select: none;
-      transition: background 0.12s, border-color 0.12s;
+      transition: all 0.15s ease;
     }
     .cal-day-cell.outside-month {
-      color: #70757a;
+      color: rgba(255, 255, 255, 0.12) !important;
+      opacity: 0.2;
     }
     .cal-day-cell.disabled {
-      color: #bdc1c6 !important;
+      color: rgba(255, 255, 255, 0.22) !important;
       cursor: not-allowed;
       background: transparent !important;
       border: none !important;
     }
     .cal-day-cell.available {
-      font-weight: 600;
-      color: #202124;
+      font-weight: 800 !important;
+      color: #ff6584 !important;
+      background: rgba(255, 101, 132, 0.2) !important;
+      border: 1.5px solid rgba(255, 101, 132, 0.6) !important;
+      border-radius: 6px !important;
+      box-shadow: 0 0 10px rgba(255, 101, 132, 0.3);
+      cursor: pointer;
     }
     .cal-day-cell.available:hover {
-      background: #d2e3fc;
-      border: 1px solid #1a73e8;
-      color: #1a73e8;
+      background: #ff4e8a !important;
+      color: #ffffff !important;
+      border-color: #ff4e8a !important;
+      box-shadow: 0 0 16px rgba(255, 78, 138, 0.7);
+      transform: scale(1.08);
     }
     .cal-day-cell.selected {
       background: #1a73e8 !important;
       color: #ffffff !important;
-      font-weight: 700 !important;
-      border-radius: 4px !important;
-      border: none !important;
+      font-weight: 800 !important;
+      border-radius: 6px !important;
+      border: 1.5px solid #8ab4f8 !important;
+      box-shadow: 0 0 14px rgba(26, 115, 232, 0.7) !important;
+    }
+    .cal-legend-text {
+      font-size: 11px;
+      color: #ff85a2;
+      text-align: center;
+      margin-top: 8px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      user-select: none;
     }
     .cal-footer-row {
       display: flex;
@@ -1074,12 +1097,12 @@
       justify-content: space-between;
       margin-top: 10px;
       padding-top: 8px;
-      border-top: 1px solid #dadce0;
+      border-top: 1px solid #3c4043;
     }
     .cal-footer-btn {
       background: transparent;
       border: none;
-      color: #1a73e8;
+      color: #8ab4f8;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -1089,7 +1112,7 @@
       transition: background 0.15s;
     }
     .cal-footer-btn:hover {
-      background: #e8f0fe;
+      background: #3c4043;
     }
 
     /* Stage 3 Confirmed Card */
@@ -1318,6 +1341,8 @@
             </div>
 
             <div class="cal-grid-days" id="calDaysGrid"></div>
+
+            <div class="cal-legend-text">🌸 Pink glowing dates = Sundays & Holidays!</div>
 
             <div class="cal-footer-row">
               <button type="button" class="cal-footer-btn" onclick="clearSelectedDate(event)">Clear</button>
