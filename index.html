@@ -971,33 +971,6 @@
       from { opacity: 0; transform: translate(-50%, -8px); }
       to { opacity: 1; transform: translate(-50%, 0); }
     }
-    .cal-header-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 8px;
-      padding: 2px 4px;
-    }
-    .cal-month-title-wrap {
-      font-size: 16px;
-      font-weight: 700;
-      color: #ffffff;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      user-select: none;
-    }
-    .cal-month-caret {
-      font-size: 14px;
-      color: #9aa0a6;
-    }
-    @keyframes calGridFade {
-      from { opacity: 0.35; transform: translateY(2px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .cal-grid-animate {
-      animation: calGridFade 0.16s ease-out;
-    }
     .cal-weekday-row {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -1005,17 +978,63 @@
       font-size: 13px;
       font-weight: 700;
       color: #9aa0a6;
-      margin-bottom: 6px;
+      padding: 4px 4px 6px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid #3c4043;
       user-select: none;
     }
     .cal-weekday-row span:first-child {
       color: #ff6584;
       font-weight: 800;
     }
-    .cal-grid-days {
+    .cal-scroll-body {
+      max-height: 250px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding-right: 2px;
+      scrollbar-width: thin;
+      scrollbar-color: #5f6368 transparent;
+    }
+    .cal-scroll-body::-webkit-scrollbar {
+      width: 5px;
+    }
+    .cal-scroll-body::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .cal-scroll-body::-webkit-scrollbar-thumb {
+      background: #5f6368;
+      border-radius: 4px;
+    }
+    .cal-month-section {
+      margin-bottom: 14px;
+    }
+    .cal-month-section:last-child {
+      margin-bottom: 4px;
+    }
+    .cal-month-divider {
+      position: sticky;
+      top: 0;
+      background: rgba(32, 33, 36, 0.96);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      padding: 5px 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      border-radius: 6px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      letter-spacing: 0.3px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .cal-month-days-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      row-gap: 4px;
+      row-gap: 3px;
       column-gap: 2px;
     }
     .cal-day-cell {
@@ -1031,9 +1050,10 @@
       user-select: none;
       transition: all 0.15s ease;
     }
-    .cal-day-cell.outside-month {
-      color: rgba(255, 255, 255, 0.12) !important;
-      opacity: 0.2;
+    .cal-day-cell.empty {
+      cursor: default;
+      background: transparent !important;
+      border: none !important;
     }
     .cal-day-cell.disabled {
       color: rgba(255, 255, 255, 0.22) !important;
@@ -1291,15 +1311,8 @@
             <span class="cal-toggle-icon">🗓️</span>
           </div>
 
-          <!-- Popup Calendar (Chrome native style matching reference image) -->
+          <!-- Continuous Seamless Scrollable Popup Calendar -->
           <div class="calendar-popup" id="calendarPopup" onclick="event.stopPropagation()">
-            <div class="cal-header-row">
-              <div class="cal-month-title-wrap">
-                <span id="calMonthTitle">August 2026</span>
-                <span class="cal-month-caret">▾</span>
-              </div>
-            </div>
-
             <div class="cal-weekday-row">
               <span>S</span>
               <span>M</span>
@@ -1310,7 +1323,7 @@
               <span>S</span>
             </div>
 
-            <div class="cal-grid-days" id="calDaysGrid"></div>
+            <div class="cal-scroll-body" id="calScrollBody"></div>
 
             <div class="cal-footer-row">
               <button type="button" class="cal-footer-btn" onclick="clearSelectedDate(event)">Clear</button>
@@ -1879,117 +1892,101 @@
   }
 
   function renderCalendar() {
-    const year = calCurrentDate.getFullYear();
-    const month = calCurrentDate.getMonth();
+    const scrollBody = document.getElementById('calScrollBody');
+    if (!scrollBody) return;
+    scrollBody.innerHTML = '';
 
-    const monthTitle = document.getElementById('calMonthTitle');
-    if (monthTitle) {
-      monthTitle.textContent = `${MONTH_NAMES[month]} ${year}`;
-    }
+    const today = new Date();
+    const startYear = today.getFullYear();
+    const startMonth = today.getMonth();
 
-    const grid = document.getElementById('calDaysGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    grid.classList.remove('cal-grid-animate');
-    void grid.offsetWidth; // Trigger reflow for smooth animation
-    grid.classList.add('cal-grid-animate');
+    // Render 18 consecutive months for smooth continuous scrolling
+    for (let offset = 0; offset <= 18; offset++) {
+      const targetDate = new Date(startYear, startMonth + offset, 1);
+      const year = targetDate.getFullYear();
+      const month = targetDate.getMonth();
 
-    const firstDayIndex = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const prevDaysInMonth = new Date(year, month, 0).getDate();
+      const monthSection = document.createElement('div');
+      monthSection.className = 'cal-month-section';
+      monthSection.id = `calMonth-${year}-${month}`;
 
-    // 1. Previous month trailing days
-    for (let i = firstDayIndex - 1; i >= 0; i--) {
-      const d = prevDaysInMonth - i;
-      const prevDate = new Date(year, month - 1, d);
-      const dayOfWeek = prevDate.getDay();
-      const status = checkDayAvailability(prevDate.getFullYear(), prevDate.getMonth(), d, dayOfWeek);
+      const divider = document.createElement('div');
+      divider.className = 'cal-month-divider';
+      divider.innerHTML = `<span>${MONTH_NAMES[month]} ${year}</span>`;
+      monthSection.appendChild(divider);
 
-      const cell = document.createElement('div');
-      cell.className = 'cal-day-cell outside-month';
-      cell.textContent = d;
+      const daysGrid = document.createElement('div');
+      daysGrid.className = 'cal-month-days-grid';
 
-      if (!status.available) {
-        cell.classList.add('disabled');
-      } else {
-        cell.classList.add('available');
-        if (selectedDateObj &&
-            selectedDateObj.getFullYear() === prevDate.getFullYear() &&
-            selectedDateObj.getMonth() === prevDate.getMonth() &&
-            selectedDateObj.getDate() === d) {
-          cell.classList.add('selected');
-        }
-        cell.onclick = function(e) {
-          e.stopPropagation();
-          selectDate(prevDate.getFullYear(), prevDate.getMonth(), d, status);
-        };
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      // Empty padding cells
+      for (let p = 0; p < firstDayIndex; p++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'cal-day-cell empty';
+        daysGrid.appendChild(emptyCell);
       }
-      grid.appendChild(cell);
-    }
 
-    // 2. Current month days
-    for (let d = 1; d <= daysInMonth; d++) {
-      const dayOfWeek = (firstDayIndex + d - 1) % 7;
-      const status = checkDayAvailability(year, month, d, dayOfWeek);
+      // Days of the month
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dayOfWeek = (firstDayIndex + d - 1) % 7;
+        const status = checkDayAvailability(year, month, d, dayOfWeek);
 
-      const cell = document.createElement('div');
-      cell.className = 'cal-day-cell';
-      cell.textContent = d;
+        const cell = document.createElement('div');
+        cell.className = 'cal-day-cell';
+        cell.textContent = d;
+        cell.dataset.date = `${year}-${month}-${d}`;
 
-      if (!status.available) {
-        cell.classList.add('disabled');
-        cell.onclick = function(e) {
-          e.stopPropagation();
-          const alertEl = document.getElementById('dateAlertMsg');
-          if (alertEl) {
-            alertEl.textContent = "Only Sundays & Holidays are available to pick! 🌴☀️";
-            setTimeout(() => { if (alertEl.textContent.includes('Only Sundays')) alertEl.textContent = ''; }, 2500);
+        if (!status.available) {
+          cell.classList.add('disabled');
+          cell.onclick = function(e) {
+            e.stopPropagation();
+            const alertEl = document.getElementById('dateAlertMsg');
+            if (alertEl) {
+              alertEl.textContent = "Only Sundays & Holidays are available to pick! 🌴☀️";
+              setTimeout(() => { if (alertEl.textContent.includes('Only Sundays')) alertEl.textContent = ''; }, 2500);
+            }
+          };
+        } else {
+          cell.classList.add('available');
+          if (selectedDateObj &&
+              selectedDateObj.getFullYear() === year &&
+              selectedDateObj.getMonth() === month &&
+              selectedDateObj.getDate() === d) {
+            cell.classList.add('selected');
           }
-        };
-      } else {
-        cell.classList.add('available');
-        if (selectedDateObj &&
-            selectedDateObj.getFullYear() === year &&
-            selectedDateObj.getMonth() === month &&
-            selectedDateObj.getDate() === d) {
-          cell.classList.add('selected');
+          cell.onclick = function(e) {
+            e.stopPropagation();
+            selectDate(year, month, d, status);
+          };
         }
-        cell.onclick = function(e) {
-          e.stopPropagation();
-          selectDate(year, month, d, status);
-        };
+        daysGrid.appendChild(cell);
       }
-      grid.appendChild(cell);
+
+      monthSection.appendChild(daysGrid);
+      scrollBody.appendChild(monthSection);
+    }
+  }
+
+  function scrollToActiveMonth(smooth = false) {
+    const scrollBody = document.getElementById('calScrollBody');
+    if (!scrollBody) return;
+
+    const today = new Date();
+    let targetYear = today.getFullYear();
+    let targetMonth = today.getMonth();
+
+    if (selectedDateObj) {
+      targetYear = selectedDateObj.getFullYear();
+      targetMonth = selectedDateObj.getMonth();
     }
 
-    // 3. Next month leading days (fill to 42 cells total)
-    const totalFilled = firstDayIndex + daysInMonth;
-    const remaining = totalFilled <= 35 ? (35 - totalFilled) : (42 - totalFilled);
-    for (let d = 1; d <= remaining; d++) {
-      const nextDate = new Date(year, month + 1, d);
-      const dayOfWeek = nextDate.getDay();
-      const status = checkDayAvailability(nextDate.getFullYear(), nextDate.getMonth(), d, dayOfWeek);
-
-      const cell = document.createElement('div');
-      cell.className = 'cal-day-cell outside-month';
-      cell.textContent = d;
-
-      if (!status.available) {
-        cell.classList.add('disabled');
-      } else {
-        cell.classList.add('available');
-        if (selectedDateObj &&
-            selectedDateObj.getFullYear() === nextDate.getFullYear() &&
-            selectedDateObj.getMonth() === nextDate.getMonth() &&
-            selectedDateObj.getDate() === d) {
-          cell.classList.add('selected');
-        }
-        cell.onclick = function(e) {
-          e.stopPropagation();
-          selectDate(nextDate.getFullYear(), nextDate.getMonth(), d, status);
-        };
-      }
-      grid.appendChild(cell);
+    const targetEl = document.getElementById(`calMonth-${targetYear}-${targetMonth}`);
+    if (targetEl) {
+      setTimeout(() => {
+        targetEl.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+      }, 10);
     }
   }
 
@@ -2011,6 +2008,11 @@
     if (miniMonth) miniMonth.textContent = MONTH_SHORT[month];
     if (miniDay) miniDay.textContent = day;
 
+    // Update selected class in DOM
+    document.querySelectorAll('.cal-day-cell.selected').forEach(el => el.classList.remove('selected'));
+    const newlySelected = document.querySelector(`.cal-day-cell[data-date="${year}-${month}-${day}"]`);
+    if (newlySelected) newlySelected.classList.add('selected');
+
     // Close popup
     const popup = document.getElementById('calendarPopup');
     const wrapper = document.getElementById('dateInputWrapper');
@@ -2019,8 +2021,6 @@
 
     const alertEl = document.getElementById('dateAlertMsg');
     if (alertEl) alertEl.textContent = '';
-
-    renderCalendar();
   }
 
   function clearSelectedDate(e) {
@@ -2030,18 +2030,16 @@
     selectedSpecialType = "";
     const input = document.getElementById('selectedDateInput');
     if (input) input.value = "";
-    renderCalendar();
+    document.querySelectorAll('.cal-day-cell.selected').forEach(el => el.classList.remove('selected'));
   }
 
   function goToToday(e) {
     if (e) e.stopPropagation();
-    calCurrentDate = new Date();
-    renderCalendar();
-  }
-
-  function navMonth(dir) {
-    calCurrentDate.setMonth(calCurrentDate.getMonth() + dir);
-    renderCalendar();
+    const today = new Date();
+    const targetEl = document.getElementById(`calMonth-${today.getFullYear()}-${today.getMonth()}`);
+    if (targetEl) {
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   function toggleCalendar(e) {
@@ -2051,62 +2049,11 @@
     if (popup) {
       const isOpen = popup.classList.toggle('open');
       if (wrapper) wrapper.classList.toggle('active', isOpen);
-      if (isOpen) renderCalendar();
+      if (isOpen) {
+        renderCalendar();
+        scrollToActiveMonth(false);
+      }
     }
-  }
-
-  // Mouse Wheel / Trackpad Scroll to navigate months
-  let calWheelThrottle = false;
-  const calPopupEl = document.getElementById('calendarPopup');
-  if (calPopupEl) {
-    calPopupEl.addEventListener('wheel', function(e) {
-      e.preventDefault();
-      if (calWheelThrottle) return;
-      if (Math.abs(e.deltaY) > 8 || Math.abs(e.deltaX) > 8) {
-        calWheelThrottle = true;
-        const dir = (e.deltaY > 0 || e.deltaX > 0) ? 1 : -1;
-        navMonth(dir);
-        setTimeout(function() { calWheelThrottle = false; }, 180);
-      }
-    }, { passive: false });
-
-    // Touch Swipe Navigation for Mobile Devices
-    let touchStartY = 0;
-    let touchStartX = 0;
-    let touchStartTime = 0;
-
-    calPopupEl.addEventListener('touchstart', function(e) {
-      if (e.touches.length === 1) {
-        touchStartY = e.touches[0].clientY;
-        touchStartX = e.touches[0].clientX;
-        touchStartTime = Date.now();
-      }
-    }, { passive: true });
-
-    calPopupEl.addEventListener('touchend', function(e) {
-      if (e.changedTouches.length === 1) {
-        const deltaY = e.changedTouches[0].clientY - touchStartY;
-        const deltaX = e.changedTouches[0].clientX - touchStartX;
-        const elapsedTime = Date.now() - touchStartTime;
-
-        // Detect vertical swipe
-        if (Math.abs(deltaY) > 25 && Math.abs(deltaY) > Math.abs(deltaX)) {
-          // Swipe up -> Next month (+1), Swipe down -> Previous month (-1)
-          if (deltaY < 0) {
-            navMonth(1);
-          } else {
-            navMonth(-1);
-          }
-        } else if (Math.abs(deltaX) > 25) {
-          // Swipe left -> Next month (+1), Swipe right -> Previous month (-1)
-          if (deltaX < 0) {
-            navMonth(1);
-          } else {
-            navMonth(-1);
-          }
-        }
-      }
-    }, { passive: true });
   }
 
   // Close calendar popup on click outside
