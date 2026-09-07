@@ -63,11 +63,12 @@
     .envelope-wrapper {
       position: relative;
       z-index: 10;
-      margin: 160px auto 40px;
+      margin: 140px auto 30px;
       display: flex;
       flex-direction: column;
       align-items: center;
       perspective: 1500px;
+      transition: transform 0.3s ease;
     }
 
     #envelope {
@@ -435,16 +436,26 @@
     }
 
     @media (max-width: 600px) {
+      .envelope-wrapper {
+        margin: 50px auto 20px;
+        transform: scale(min(0.82, calc((100vw - 36px) / 510)));
+        transform-origin: top center;
+      }
+      .tap-hint {
+        margin-top: 18px;
+        font-size: 1.15rem;
+        letter-spacing: 1px;
+      }
       .card {
-        padding: 48px 24px 40px;
+        padding: 36px 20px 30px;
         border-radius: 28px;
       }
       .btn-yes {
-        padding: 14px 36px;
+        padding: 14px 32px;
         font-size: 1.15rem;
       }
       .btn-no {
-        padding: 14px 36px;
+        padding: 14px 32px;
         font-size: 1.15rem;
       }
     }
@@ -1424,7 +1435,7 @@
   }
 
   /* ─────────────────────────────────────────
-     NO BUTTON – CLEAN SMOOTH DODGE (Mobile & Desktop)
+     NO BUTTON – DYNAMIC RANDOM DODGE ANIMATIONS & PHRASES
   ──────────────────────────────────────── */
   const btnNo = document.getElementById('btnNo');
   const DODGE_DIST = 80;
@@ -1433,6 +1444,61 @@
   let noX = 0, noY = 0;
   let lastDodgeTime = 0;
   let currentCornerIndex = -1;
+  let dodgeCount = 0;
+
+  const NO_BUTTON_TEXTS = [
+    "NO 🤨",
+    "Can't touch this! 😜",
+    "Too slow! 💨",
+    "Try again! 🏃💨",
+    "Nope! 🙈",
+    "Catch me! 🚀",
+    "Hehe miss me? 😝",
+    "Still NO? 🥺",
+    "Nice try! 😉",
+    "Over here! 👉",
+    "Almost! 🤪",
+    "Missed me! 🙃"
+  ];
+
+  const DODGE_ANIMATIONS = [
+    {
+      // 1. 360 Spin Zoom
+      name: "spin-zoom",
+      transition: "transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
+      getTransform: (x, y) => `translate3d(${x}px, ${y}px, 0) rotate(${Math.random() > 0.5 ? 360 : -360}deg) scale(1.12)`
+    },
+    {
+      // 2. Elastic Squash & Bounce
+      name: "elastic-bounce",
+      transition: "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.45)",
+      getTransform: (x, y) => `translate3d(${x}px, ${y}px, 0) scale(1.22, 0.82) rotate(${Math.random() * 16 - 8}deg)`
+    },
+    {
+      // 3. Rocket Tilt
+      name: "rocket-tilt",
+      transition: "transform 0.3s cubic-bezier(0.25, 1, 0.5, 1)",
+      getTransform: (x, y) => `translate3d(${x}px, ${y}px, 0) rotate(${Math.random() > 0.5 ? 20 : -20}deg) scale(1.15)`
+    },
+    {
+      // 4. 3D Perspective Card Flip
+      name: "flip-glide",
+      transition: "transform 0.38s cubic-bezier(0.68, -0.4, 0.265, 1.4)",
+      getTransform: (x, y) => `translate3d(${x}px, ${y}px, 0) rotateY(180deg) rotateZ(${Math.random() > 0.5 ? 14 : -14}deg)`
+    },
+    {
+      // 5. Flash Speed Dash
+      name: "flash-dash",
+      transition: "transform 0.26s cubic-bezier(0.16, 1, 0.3, 1)",
+      getTransform: (x, y) => `translate3d(${x}px, ${y}px, 0) scale(0.92) rotate(${Math.random() * 24 - 12}deg)`
+    },
+    {
+      // 6. Super Springy Pop
+      name: "spring-pop",
+      transition: "transform 0.42s cubic-bezier(0.34, 1.8, 0.64, 1)",
+      getTransform: (x, y) => `translate3d(${x}px, ${y}px, 0) scale(1.25)`
+    }
+  ];
 
   function ensureFixedPosition() {
     if (!hasDodged) {
@@ -1491,7 +1557,12 @@
   }
 
   function dodge(fromX, fromY) {
-    const w = btnNo.offsetWidth  || 110;
+    dodgeCount++;
+    // Change button text dynamically to a playful phrase
+    const nextPhrase = NO_BUTTON_TEXTS[dodgeCount % NO_BUTTON_TEXTS.length];
+    btnNo.innerText = nextPhrase;
+
+    const w = btnNo.offsetWidth  || 120;
     const h = btnNo.offsetHeight || 44;
     const winW = window.innerWidth;
     const winH = window.innerHeight;
@@ -1504,12 +1575,14 @@
     const curX = (typeof fromX === 'number') ? fromX : (noX + w / 2);
     const curY = (typeof fromY === 'number') ? fromY : (noY + h / 2);
 
-    // 4 Extreme Far Corner Zones
+    // 6 Dynamic Far Zones across screen corners and edges with random jitter
     const zones = [
-      { id: 0, x: minX + Math.random() * 25, getY: () => minY + Math.random() * 35 }, // Top-Left
-      { id: 1, x: maxX - Math.random() * 25, getY: () => minY + Math.random() * 35 }, // Top-Right
-      { id: 2, x: minX + Math.random() * 25, getY: () => maxY - Math.random() * 35 }, // Bottom-Left
-      { id: 3, x: maxX - Math.random() * 25, getY: () => maxY - Math.random() * 35 }  // Bottom-Right
+      { id: 0, x: minX + Math.random() * 35, getY: () => minY + Math.random() * 45 }, // Top-Left
+      { id: 1, x: maxX - Math.random() * 35, getY: () => minY + Math.random() * 45 }, // Top-Right
+      { id: 2, x: minX + Math.random() * 35, getY: () => maxY - Math.random() * 45 }, // Bottom-Left
+      { id: 3, x: maxX - Math.random() * 35, getY: () => maxY - Math.random() * 45 }, // Bottom-Right
+      { id: 4, x: minX + Math.random() * 25, getY: () => Math.max(minY, Math.min(maxY, winH * 0.45 + (Math.random() * 80 - 40))) }, // Mid-Left
+      { id: 5, x: maxX - Math.random() * 25, getY: () => Math.max(minY, Math.min(maxY, winH * 0.45 + (Math.random() * 80 - 40))) }  // Mid-Right
     ];
 
     // Score zones by distance from current touch/button position
@@ -1521,21 +1594,31 @@
       return { ...z, targetY: zY, dist };
     });
 
-    // Sort by largest distance first
+    // Sort by farthest distance first
     scoredZones.sort((a, b) => b.dist - a.dist);
 
-    // Choose the farthest candidate not matching the currently occupied corner
+    // Filter out recently occupied zone so it always jumps to a fresh far zone
     let candidates = scoredZones.filter(z => z.id !== currentCornerIndex);
     if (candidates.length === 0) candidates = scoredZones;
 
-    const chosen = candidates[0];
+    // Pick among the top 2 farthest zones randomly for high unpredictability
+    const topPickIndex = Math.random() < 0.75 ? 0 : Math.min(1, candidates.length - 1);
+    const chosen = candidates[topPickIndex];
     currentCornerIndex = chosen.id;
 
     noX = Math.min(Math.max(minX, chosen.x), maxX);
     noY = Math.min(Math.max(minY, chosen.targetY), maxY);
 
-    btnNo.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-    btnNo.style.transform = `translate3d(${noX}px, ${noY}px, 0)`;
+    // Pick a random dynamic animation from the animation pool
+    const anim = DODGE_ANIMATIONS[Math.floor(Math.random() * DODGE_ANIMATIONS.length)];
+    btnNo.style.transition = anim.transition;
+    btnNo.style.transform = anim.getTransform(noX, noY);
+
+    // After animation completes, smoothly stabilize button orientation
+    setTimeout(() => {
+      btnNo.style.transition = 'transform 0.25s ease, background 0.2s, box-shadow 0.2s';
+      btnNo.style.transform = `translate3d(${noX}px, ${noY}px, 0) scale(1) rotate(0deg)`;
+    }, 400);
   }
 
   // Desktop Mouse Movement Proximity
